@@ -26,8 +26,8 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-const uint8_t DXL_ID[] = {1,2,3,4,5,6};
-const int number_Of_Motor = 2; //sizeof(DXL_ID) / sizeof(DXL_ID[0]);
+const uint8_t DXL_ID[] = {1,2}; //,3,4,5,6};
+const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
 DynamixelShield dxl;
@@ -48,12 +48,14 @@ void setup() {
   // Get DYNAMIXEL information
   for(int i = 0;i<number_Of_Motor;i++){ //iterate through all the motors
     dxl.ping(DXL_ID[i]);
+    delay(800);
   
     // Turn off torque when configuring items in EEPROM area
     dxl.torqueOff(DXL_ID[i]);
     dxl.setOperatingMode(DXL_ID[i], OP_EXTENDED_POSITION);
+    delay(800);
     dxl.torqueOn(DXL_ID[i]);
-    delay(1000);
+    delay(800);
   }
 }
 
@@ -63,28 +65,32 @@ void loop() {
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
-    uint32_t currentILEFTposition = dxl.getCurPosition(DXL_ID[2*i]);
-    uint32_t currentIRIGHTposition = dxl.getCurPosition(DXL_ID[2*i+1]);
+    uint32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
+    dxl.setGoalPosition(1/*DXL_ID[2*i]*/, currentILEFTposition - 100, UNIT_DEGREE);
+    DEBUG_SERIAL.print("Present Left Position(raw) : ");
+    DEBUG_SERIAL.println(currentILEFTposition);
 
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition - 2000);
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition + 2000);
+    uint32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
+    dxl.setGoalPosition(2/*DXL_ID[2*i+1]*/, currentIRIGHTposition + 100, UNIT_DEGREE);
+    DEBUG_SERIAL.print("Present Right Position(raw) : ");
+    DEBUG_SERIAL.println(currentIRIGHTposition);
     delay(1000);
     // Print present position in raw value
-    DEBUG_SERIAL.print("Present Position(raw) : ");
-    DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i]));
-    DEBUG_SERIAL.print("Present Position(raw) : ");
-    DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1]));
+    // DEBUG_SERIAL.print("Present Position(raw) : ");
+    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i]));
+    // DEBUG_SERIAL.print("Present Position(raw) : ");
+    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1]));
     delay(1000);
   
     // Set Goal Position in DEGREE value
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition);
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition);
+    dxl.setGoalPosition(1/*DXL_ID[2*i]*/, currentILEFTposition, UNIT_DEGREE);
+    dxl.setGoalPosition(2/*DXL_ID[2*i+1]*/, currentIRIGHTposition, UNIT_DEGREE);
     delay(1000);
     // Print present position in degree value
-    DEBUG_SERIAL.print("Present Position(degree) : ");
-    DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
-    DEBUG_SERIAL.print("Present Position(degree) : ");
-    DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
+    // DEBUG_SERIAL.print("Present Position(degree) : ");
+    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
+    // DEBUG_SERIAL.print("Present Position(degree) : ");
+    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     delay(1000);
   }
 
