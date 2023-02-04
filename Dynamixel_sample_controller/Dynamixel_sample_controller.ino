@@ -65,12 +65,12 @@ void loop() {
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
-    uint32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
+    int32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
     dxl.setGoalPosition(1/*DXL_ID[2*i]*/, currentILEFTposition - 100, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Left Position(raw) : ");
     DEBUG_SERIAL.println(currentILEFTposition);
 
-    uint32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
+    int32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
     dxl.setGoalPosition(2/*DXL_ID[2*i+1]*/, currentIRIGHTposition + 100, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Right Position(raw) : ");
     DEBUG_SERIAL.println(currentIRIGHTposition);
