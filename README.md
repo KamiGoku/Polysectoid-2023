@@ -6,9 +6,9 @@ Using this to document the dependencies
 
 
 Libraries:
-  Dynamixel2Arduino
-  DynamixelShield
+* Dynamixel2Arduino
+* DynamixelShield
 
 
 Board Manager:
-  OpenRB-150
+* OpenRB-150
