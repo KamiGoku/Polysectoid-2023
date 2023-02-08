@@ -66,12 +66,12 @@ void loop() {
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
     int32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition + 300, UNIT_DEGREE);
+    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition - 300, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Left Position(raw) : ");
     DEBUG_SERIAL.println(currentILEFTposition);
 
     int32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition - 300, UNIT_DEGREE);
+    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition + 300, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Right Position(raw) : ");
     DEBUG_SERIAL.println(currentIRIGHTposition);
     delay(1500);
