@@ -26,7 +26,7 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-const uint8_t DXL_ID[] = {1,2,3,4}; //,5,6};
+const uint8_t DXL_ID[] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
@@ -85,7 +85,7 @@ void loop() {
     // Set Goal Position in DEGREE value
     dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
     dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
-    delay(1500);
+    delay(500);
     // Print present position in degree value
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
