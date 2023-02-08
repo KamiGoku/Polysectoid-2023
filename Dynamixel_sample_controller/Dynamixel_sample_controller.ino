@@ -26,12 +26,12 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-const uint8_t DXL_ID[] = {1,2,3,4,5,6};
+const uint8_t DXL_ID[6] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-const int8_t worm_pattern[3][3] = {{1,0,1},{0,1,1},{1,1,0}};
-uint8_t iteration = 0;
+const int32_t worm_pattern[3][3] = {{1,0,1},{0,1,1},{1,1,0}};
+int32_t iteration = 0;
 int32_t calibration[6];
 
 DynamixelShield dxl;
@@ -70,16 +70,22 @@ void loop() {
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
-    int32_t increase_amount = 300 * worm_pattern[iteration][i];
+    int32_t increase_amount = 100 * (int32_t)worm_pattern[iteration][i];
+    DEBUG_SERIAL.print("  Increase Amount: ");
+    DEBUG_SERIAL.println(increase_amount);
     int32_t currentILEFTposition = calibration[2*i] - increase_amount;
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
-    DEBUG_SERIAL.print("Present Left Position(raw) : ");
-    DEBUG_SERIAL.println(currentILEFTposition);
+    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
+    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
+    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
+    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
 
     int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
-    DEBUG_SERIAL.print("Present Right Position(raw) : ");
-    DEBUG_SERIAL.println(currentIRIGHTposition);
+    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
+    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
+    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
+    DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+    DEBUG_SERIAL.print("  Segment Number: ");
+    DEBUG_SERIAL.println(i);
   }
     
     // Print present position in raw value
