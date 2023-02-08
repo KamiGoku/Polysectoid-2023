@@ -26,7 +26,7 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-const uint8_t DXL_ID[] = {1,2}; //,3,4,5,6};
+const uint8_t DXL_ID[] = {1,2,3,4}; //,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
@@ -66,32 +66,32 @@ void loop() {
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
     int32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
-    dxl.setGoalPosition(1/*DXL_ID[2*i]*/, currentILEFTposition - 100, UNIT_DEGREE);
+    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition + 300, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Left Position(raw) : ");
     DEBUG_SERIAL.println(currentILEFTposition);
 
     int32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
-    dxl.setGoalPosition(2/*DXL_ID[2*i+1]*/, currentIRIGHTposition + 100, UNIT_DEGREE);
+    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition - 300, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Right Position(raw) : ");
     DEBUG_SERIAL.println(currentIRIGHTposition);
-    delay(1000);
+    delay(1500);
     // Print present position in raw value
     // DEBUG_SERIAL.print("Present Position(raw) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i]));
     // DEBUG_SERIAL.print("Present Position(raw) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1]));
-    delay(1000);
+    // delay(1000);
   
     // Set Goal Position in DEGREE value
-    dxl.setGoalPosition(1/*DXL_ID[2*i]*/, currentILEFTposition, UNIT_DEGREE);
-    dxl.setGoalPosition(2/*DXL_ID[2*i+1]*/, currentIRIGHTposition, UNIT_DEGREE);
-    delay(1000);
+    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
+    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
+    delay(1500);
     // Print present position in degree value
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
-    delay(1000);
+    // delay(1000);
   }
 
 }
