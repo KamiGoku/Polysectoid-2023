@@ -30,6 +30,10 @@ const uint8_t DXL_ID[] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
+const int8_t worm_pattern[3][3] = {{1,0,1},{0,1,1},{1,1,0}};
+uint8_t iteration = 0;
+int32_t calibration[6];
+
 DynamixelShield dxl;
 
 //This namespace is required to use Control table item names
@@ -56,6 +60,7 @@ void setup() {
     delay(800);
     dxl.torqueOn(DXL_ID[i]);
     delay(800);
+    calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
   }
 }
 
@@ -65,16 +70,18 @@ void loop() {
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   for(int i = 0;i<number_Of_Motor/2;i++){
-    int32_t currentILEFTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition - 300, UNIT_DEGREE);
+    int32_t increase_amount = 300 * worm_pattern[iteration][i];
+    int32_t currentILEFTposition = calibration[2*i] - increase_amount;
+    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Left Position(raw) : ");
     DEBUG_SERIAL.println(currentILEFTposition);
 
-    int32_t currentIRIGHTposition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition + 300, UNIT_DEGREE);
+    int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
+    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
     DEBUG_SERIAL.print("Present Right Position(raw) : ");
     DEBUG_SERIAL.println(currentIRIGHTposition);
-    delay(1500);
+  }
+    
     // Print present position in raw value
     // DEBUG_SERIAL.print("Present Position(raw) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i]));
@@ -83,15 +90,20 @@ void loop() {
     // delay(1000);
   
     // Set Goal Position in DEGREE value
-    dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
-    dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
-    delay(500);
+    // dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
+    // dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
+    // delay(1000);
     // Print present position in degree value
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
-  }
+
+  iteration++;
+  iteration = iteration % 3;
+  DEBUG_SERIAL.print("Iteration Number: ");
+  DEBUG_SERIAL.println(iteration);
+  delay(1500);
 
 }
