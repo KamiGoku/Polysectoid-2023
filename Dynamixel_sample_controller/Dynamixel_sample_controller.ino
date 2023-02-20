@@ -69,8 +69,8 @@ void loop() {
   
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
-  for(int i = 0;i<number_Of_Motor/2;i++){
-    int32_t increase_amount = 100 * (int32_t)worm_pattern[iteration][i];
+  for(int i = 0;i<=number_Of_Motor/2;i++){
+    int32_t increase_amount = 150 * (int32_t)worm_pattern[iteration][i];
     DEBUG_SERIAL.print("  Increase Amount: ");
     DEBUG_SERIAL.println(increase_amount);
     int32_t currentILEFTposition = calibration[2*i] - increase_amount;
@@ -78,12 +78,15 @@ void loop() {
     DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
     int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
     DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
+    delay(20);
 
     int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
     dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
     DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
     int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
     DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+    delay(20);
+
     DEBUG_SERIAL.print("  Segment Number: ");
     DEBUG_SERIAL.println(i);
   }
@@ -110,6 +113,6 @@ void loop() {
   iteration = iteration % 3;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
-  delay(1500);
+  delay(2000);
 
 }
