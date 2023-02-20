@@ -15,6 +15,7 @@
 *******************************************************************************/
 
 #include <DynamixelShield.h>
+#include "Peristalsis_Routine.h"
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -31,7 +32,7 @@ const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
 const int32_t worm_pattern[3][3] = {{1,0,1},{0,1,1},{1,1,0}};
-int32_t iteration = 0;
+int iteration = 0;
 int32_t calibration[6];
 
 DynamixelShield dxl;
@@ -66,30 +67,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration);
+
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
-  for(int i = 0;i<=number_Of_Motor/2;i++){
-    int32_t increase_amount = 150 * (int32_t)worm_pattern[iteration][i];
-    DEBUG_SERIAL.print("  Increase Amount: ");
-    DEBUG_SERIAL.println(increase_amount);
-    int32_t currentILEFTposition = calibration[2*i] - increase_amount;
-    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
-    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
-    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
-    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
-    delay(20);
-
-    int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
-    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
-    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
-    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
-    DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
-    delay(20);
-
-    DEBUG_SERIAL.print("  Segment Number: ");
-    DEBUG_SERIAL.println(i);
-  }
+  
     
     // Print present position in raw value
     // DEBUG_SERIAL.print("Present Position(raw) : ");
