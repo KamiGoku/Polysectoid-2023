@@ -11,4 +11,4 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-void peristalsisRoutine (DynamixelShield &dxl, int32_t worm_pattern[], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration);
+void peristalsisRoutine (DynamixelShield &dxl, int32_t worm_pattern[][3], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration);

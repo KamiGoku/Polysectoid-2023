@@ -27,11 +27,11 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-const uint8_t DXL_ID[6] = {1,2,3,4,5,6};
+uint8_t DXL_ID[6] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-const int32_t worm_pattern[3][3] = {{1,0,1},{0,1,1},{1,1,0}};
+int32_t worm_pattern[][3] = {{1,0,1},{0,1,1},{1,1,0}};
 int iteration = 0;
 int32_t calibration[6];
 
