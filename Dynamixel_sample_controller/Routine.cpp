@@ -51,7 +51,7 @@ void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGM
 
       int32_t increaseRIGHTamount = 150 * int32_t(worm_pattern_turning[iteration][i]-1)/2;//-1 means turning right
 
-	    int32_t currentIRIGHTposition = calibration[2*i+1] + increaseRIGHTamount;//actual update with calibration data
+	    int32_t currentIRIGHTposition = calibration[2*i+1] - increaseRIGHTamount;//actual update with calibration data
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
 	    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);//for debugging
