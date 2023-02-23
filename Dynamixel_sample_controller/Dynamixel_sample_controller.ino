@@ -31,7 +31,12 @@ uint8_t DXL_ID[6] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-int32_t worm_pattern[][3] = {{1,0,1},{0,1,1},{1,1,0}};
+int8_t worm_pattern[][3] = {{1,0,1},{0,1,1},{1,1,0}};
+int8_t worm_pattern_turning[][3] = {{1,0,-1},{0,1,0},{-1,0,1},{0,-1,0}};
+
+int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
+int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
+
 int iteration = 0;
 int32_t calibration[6];
 
@@ -92,7 +97,7 @@ void loop() {
     // delay(1000);
 
   iteration++;
-  iteration = iteration % 3;
+  iteration = iteration % peristalsis_cycle_size;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
   delay(2000);

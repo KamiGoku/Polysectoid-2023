@@ -11,9 +11,9 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-void peristalsisRoutine (DynamixelShield &dxl, int32_t worm_pattern[][3], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
+void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][3], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
 	for(int i = 0;i<=number_Of_Motor/2;i++){
-	    int32_t increase_amount = int32_t(150 * worm_pattern[iteration][i]);
+	    int32_t increase_amount = 150 * int32_t(worm_pattern[iteration][i]);
 	    DEBUG_SERIAL.print("  Increase Amount: ");
 	    DEBUG_SERIAL.println(increase_amount);
 	    int32_t currentILEFTposition = calibration[2*i] - increase_amount;
