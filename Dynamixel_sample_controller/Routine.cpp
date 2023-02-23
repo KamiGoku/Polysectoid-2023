@@ -1,5 +1,6 @@
 #include <arduino.h>
 #include <DynamixelShield.h>
+#define SEGMENT_NUMBER 3
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -11,7 +12,7 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][3], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
+void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
 	for(int i = 0;i<=number_Of_Motor/2;i++){
 	    int32_t increase_amount = 150 * int32_t(worm_pattern[iteration][i]);
 	    DEBUG_SERIAL.print("  Increase Amount: ");
@@ -34,3 +35,30 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][3], int num
 	    DEBUG_SERIAL.println(i);
 	}
 }
+
+void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
+  for(int i = 0;i<=number_Of_Motor/2;i++){
+	    int32_t increaseLEFTamount = 150 * int32_t(worm_pattern_turning[iteration][i]+1)/2;//+1 means turning left
+	    // DEBUG_SERIAL.print("  Increase Amount: ");
+	    // DEBUG_SERIAL.println(increase_amount);
+
+	    int32_t currentILEFTposition = calibration[2*i] - increaseLEFTamount;//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
+	    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);//for debugging
+	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
+	    delay(20);
+
+      int32_t increaseRIGHTamount = 150 * int32_t(worm_pattern_turning[iteration][i]-1)/2;//-1 means turning right
+
+	    int32_t currentIRIGHTposition = calibration[2*i+1] + increaseRIGHTamount;//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
+	    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);//for debugging
+	    DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+	    delay(20);
+
+	    DEBUG_SERIAL.print("  Segment Number: ");
+	    DEBUG_SERIAL.println(i);
+  }
+}  

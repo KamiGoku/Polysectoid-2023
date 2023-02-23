@@ -16,6 +16,7 @@
 
 #include <DynamixelShield.h>
 #include "Routine.h"
+#define SEGMENT_NUMBER 3
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -31,8 +32,8 @@ uint8_t DXL_ID[6] = {1,2,3,4,5,6};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-int8_t worm_pattern[][3] = {{1,0,1},{0,1,1},{1,1,0}};
-int8_t worm_pattern_turning[][3] = {{1,0,-1},{0,1,0},{-1,0,1},{0,-1,0}};
+int8_t worm_pattern[][SEGMENT_NUMBER] = {{1,0,1},{0,1,1},{1,1,0}}; //1 means contract, 0 means relax
+int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,0,-1},{0,1,0},{-1,0,1},{0,-1,0}}; //1 means turning left. -1 means turning right, 0 means not turning
 
 int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
@@ -72,8 +73,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration);
-
+  // peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration);
+  undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration);
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   
@@ -97,7 +98,7 @@ void loop() {
     // delay(1000);
 
   iteration++;
-  iteration = iteration % peristalsis_cycle_size;
+  iteration = iteration % undulation_cycle_size;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
   delay(2000);
