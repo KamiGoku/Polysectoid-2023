@@ -15,7 +15,7 @@
 *******************************************************************************/
 
 #include <DynamixelShield.h>
-#include "Peristalsis_Routine.h"
+#include "Routine.h"
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
