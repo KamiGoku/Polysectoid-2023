@@ -1,6 +1,6 @@
 #include <arduino.h>
 #include <DynamixelShield.h>
-#define SEGMENT_NUMBER 3
+#define SEGMENT_NUMBER 5
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>

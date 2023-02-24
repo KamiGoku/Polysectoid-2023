@@ -1,6 +1,6 @@
 #include <arduino.h>
 #include <DynamixelShield.h>
-#define SEGMENT_NUMBER 3
+#define SEGMENT_NUMBER 5
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -14,7 +14,7 @@
 
 void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
 	for(int i = 0;i<=number_Of_Motor/2;i++){
-	    int32_t increase_amount = 150 * int32_t(worm_pattern[iteration][i]);
+	    int32_t increase_amount = 100 * int32_t(worm_pattern[iteration][i]);
 	    DEBUG_SERIAL.print("  Increase Amount: ");
 	    DEBUG_SERIAL.println(increase_amount);
 	    int32_t currentILEFTposition = calibration[2*i] - increase_amount;
@@ -39,7 +39,7 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUM
 void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration){
   for(int i = 0;i<=number_Of_Motor/2;i++){
       int32_t relax = abs(worm_pattern_turning[iteration][i]);      
-	    int32_t increaseLEFTamount = relax*(150 * int32_t(worm_pattern_turning[iteration][i]+1)/2);//+1 means turning left
+	    int32_t increaseLEFTamount = relax*(100 * int32_t(worm_pattern_turning[iteration][i]+1)/2);//+1 means turning left
 	    // DEBUG_SERIAL.print("  Increase Amount: ");
 	    // DEBUG_SERIAL.println(increase_amount);
 
@@ -50,7 +50,7 @@ void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGM
 	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
 	    delay(20);
 
-      int32_t increaseRIGHTamount = relax*(150 * int32_t(worm_pattern_turning[iteration][i]-1)/2);//-1 means turning right
+      int32_t increaseRIGHTamount = relax*(100 * int32_t(worm_pattern_turning[iteration][i]-1)/2);//-1 means turning right
 
 	    int32_t currentIRIGHTposition = calibration[2*i+1] - increaseRIGHTamount;//actual update with calibration data
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
