@@ -40,6 +40,7 @@ int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_patte
 
 int iteration = 0;
 int32_t calibration[number_Of_Motor];
+const int32_t full_contraction = -50;
 
 DynamixelShield dxl;
 
@@ -73,8 +74,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration);
-  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration);
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
   
@@ -97,8 +96,11 @@ void loop() {
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
 
+  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction);
+  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration);
+
   iteration++;
-  iteration = iteration % undulation_cycle_size;
+  iteration = iteration % peristalsis_cycle_size;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
   delay(2000);
