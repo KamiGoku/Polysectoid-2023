@@ -22,21 +22,21 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUM
 	    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);
 	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
-	    delay(20);
+	    delay(30);
 
 	    int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
 	    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);
 	    DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
-	    delay(20);
+	    delay(30);
 
 	    DEBUG_SERIAL.print("  Segment Number: ");
 	    DEBUG_SERIAL.println(i);
 
-      delay(800);
+      //delay(800);
 	}
-  // delay(2000);
+   delay(450);
 }
 
 void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration, int32_t full_contraction){
