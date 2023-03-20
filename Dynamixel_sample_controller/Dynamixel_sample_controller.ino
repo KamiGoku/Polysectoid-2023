@@ -40,7 +40,7 @@ int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_patte
 
 int iteration = 0;
 int32_t calibration[number_Of_Motor];
-const int32_t full_contraction = -570;
+const int32_t full_contraction = -630;
 
 DynamixelShield dxl;
 
