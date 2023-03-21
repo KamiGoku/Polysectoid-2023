@@ -15,7 +15,6 @@
 *******************************************************************************/
 
 #include <DynamixelShield.h>
-#include "Routine.h"
 #define SEGMENT_NUMBER 5
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
@@ -39,8 +38,8 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={151, 213, 40, 149, 35, 144, 294, 154, 141, 192};
-const int32_t full_contraction = -500;
+int32_t calibration[number_Of_Motor];
+const int32_t full_contraction = -570;
 
 DynamixelShield dxl;
 
@@ -68,41 +67,18 @@ void setup() {
     delay(800);
     dxl.torqueOn(DXL_ID[i]);
     delay(800);
-    // calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
+    calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
   }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
-  // Set Goal Position in RAW value
-  
-    
-    // Print present position in raw value
-    // DEBUG_SERIAL.print("Present Position(raw) : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i]));
-    // DEBUG_SERIAL.print("Present Position(raw) : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1]));
-    // delay(1000);
-  
-    // Set Goal Position in DEGREE value
-    // dxl.setGoalPosition(DXL_ID[2*i], currentILEFTposition, UNIT_DEGREE);
-    // dxl.setGoalPosition(DXL_ID[2*i+1], currentIRIGHTposition, UNIT_DEGREE);
-    // delay(1000);
-    // Print present position in degree value
-    // DEBUG_SERIAL.print("Present Position(degree) : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i], UNIT_DEGREE));
-    // DEBUG_SERIAL.print("Present Position(degree) : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
-    // delay(1000);
-
-  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction);
-  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration);
-
-  iteration++;
-  iteration = iteration % peristalsis_cycle_size;
-  DEBUG_SERIAL.print("Iteration Number: ");
-  DEBUG_SERIAL.println(iteration);
+  DEBUG_SERIAL.print("callibrated segment set: {");
+  for(int i = 0;i<number_Of_Motor;i++){
+    DEBUG_SERIAL.print(calibration[i]);
+    if(i!=number_Of_Motor-1){
+      DEBUG_SERIAL.print(", ");
+    }
+  }
+  DEBUG_SERIAL.println("};");
   delay(2000);
-
 }
