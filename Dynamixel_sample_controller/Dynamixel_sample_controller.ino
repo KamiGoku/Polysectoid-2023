@@ -15,8 +15,8 @@
 *******************************************************************************/
 
 #include <DynamixelShield.h>
-#include "Routine.h"
-#define SEGMENT_NUMBER 5
+#include "Routine.h" 
+#define SEGMENT_NUMBER 7
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -28,19 +28,19 @@
   #define DEBUG_SERIAL Serial
 #endif
 
-uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10};
+uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-int8_t worm_pattern[][SEGMENT_NUMBER] = {{0,0,1,1,1},{1,0,0,1,1},{1,1,0,0,1},{1,1,1,0,0},{0,1,1,1,0}}; //1 means contract, 0 means relax
-int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,0,-1,-1},{1,0,-1,-1,0},{0,-1,-1,0,1},{-1,-1,0,1,1},{-1,0,1,1,0},{0,1,1,0,-1}}; //1 means turning left. -1 means turning right, 0 means not turning
+int8_t worm_pattern[][SEGMENT_NUMBER] = {{0,0,1,1,0,0,1}, {1,0,0,1,1,0,0}, {1,1,0,0,1,1,0}, {0,1,1,0,0,1,1}}; //1 means contract, 0 means relax
+int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,0,-1,-1,0,1}, {0,1,1,0,-1,-1,0}, {-1,0,1,1,0,-1,-1}, {-1,-1,0,1,1,0,-1}, {0,-1,-1,0,1,1,0}, {1,0,-1,-1,0,1,1}}; //1 means turning left. -1 means turning right, 0 means not turning
 
 int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={151, 213, 40, 149, 35, 144, 294, 154, 141, 192};
-const int32_t full_contraction = -500;
+int32_t calibration[number_Of_Motor]={131, 334, 319, 176, 223, 90, 262, 273, 189, 156, 229, 188, 203, 283};
+const int32_t full_contraction = 500;
 
 DynamixelShield dxl;
 
@@ -68,7 +68,7 @@ void setup() {
     delay(800);
     dxl.torqueOn(DXL_ID[i]);
     delay(800);
-    // calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
+    calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
   }
 }
 
