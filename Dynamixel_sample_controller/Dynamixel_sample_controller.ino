@@ -34,12 +34,15 @@ const float DXL_PROTOCOL_VERSION = 2.0;
 
 int8_t worm_pattern[][SEGMENT_NUMBER] = {{0,0,1,1,0,0,1}, {1,0,0,1,1,0,0}, {1,1,0,0,1,1,0}, {0,1,1,0,0,1,1}}; //1 means contract, 0 means relax
 int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,0,-1,-1,0,1}, {0,1,1,0,-1,-1,0}, {-1,0,1,1,0,-1,-1}, {-1,-1,0,1,1,0,-1}, {0,-1,-1,0,1,1,0}, {1,0,-1,-1,0,1,1}}; //1 means turning left. -1 means turning right, 0 means not turning
+bool pause = false;
+const int pause_button = 1;
+
 
 int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={131, 334, 319, 176, 223, 90, 262, 273, 189, 156, 229, 188, 203, 283};
+int32_t calibration[number_Of_Motor]={288, 58, 195, 349, 140, 183, 317, 1, 162, 157, 75, 279, 206, 203};
 const int32_t full_contraction = 500;
 
 DynamixelShield dxl;
@@ -49,7 +52,8 @@ using namespace ControlTableItem;
 
 void setup() {
   // put your setup code here, to run once:
-  
+  pinMode(pause_button, INPUT);
+  attachInterrupt(digitalPinToInterrupt(pause_button), relax_worm, RISING); //pause when button is pressed and unpaused when it's pressed again
   // For Uno, Nano, Mini, and Mega, use UART port of DYNAMIXEL Shield to debug.
   DEBUG_SERIAL.begin(115200);
 
@@ -68,7 +72,7 @@ void setup() {
     delay(800);
     dxl.torqueOn(DXL_ID[i]);
     delay(800);
-    calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
+    //calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
   }
 }
 
@@ -96,7 +100,7 @@ void loop() {
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
 
-  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction);
+  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
   // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration);
 
   iteration++;
@@ -105,4 +109,15 @@ void loop() {
   DEBUG_SERIAL.println(iteration);
   delay(2000);
 
+}
+
+void relax_worm(){
+  pause = !pause; //pause when button is pressed and unpaused when it's pressed again
+  delay(1500);
+  if(pause){
+    DEBUG_SERIAL.println("PAUSED");
+  }
+  else{
+    DEBUG_SERIAL.println("UNPAUSED");
+  }
 }
