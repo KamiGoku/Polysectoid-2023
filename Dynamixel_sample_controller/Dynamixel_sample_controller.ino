@@ -32,10 +32,11 @@ uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-int8_t worm_pattern[][SEGMENT_NUMBER] = {{0,1,1,0,0,1,1}, 
-                                          {0,0,1,1,0,0,1}, 
-                                          {1,0,0,1,1,0,0}, 
-                                          {1,1,0,0,1,1,0}}; //1 means contract, 0 means relax
+int8_t worm_pattern[][SEGMENT_NUMBER] = {{1,1,1,0,0,1,1}, 
+                                          {0,1,1,1,0,0,1}, 
+                                          {0,0,1,1,1,0,0}, 
+                                          {1,0,0,1,1,1,0},
+                                          {1,1,0,0,1,1,1}}; //1 means contract, 0 means relax
                                           
 int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,1,0,-1,-1,-1}, 
                                                   {0,1,1,1,0,-1,-1}, 
@@ -53,7 +54,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={275, 275, 215, 85, 339, 270, 45, 313, 311, 124, 207, 351, 357, 129};
+int32_t calibration[number_Of_Motor]={333, 74, 310, 165, 112, 330, 356, 264, 232, 333, 242, 66, 83, 240};
 const int32_t full_contraction = 500;
 
 DynamixelShield dxl;
@@ -111,11 +112,11 @@ void loop() {
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
 
-  // peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
-  undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
+  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
+  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
 
   iteration++;
-  iteration = iteration % undulation_cycle_size;
+  iteration = iteration % peristalsis_cycle_size;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
   // delay(100);
