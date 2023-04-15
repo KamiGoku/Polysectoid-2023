@@ -17,18 +17,19 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUM
 	    int32_t increase_amount =  int32_t(not_pause) * (50 + full_contraction * int32_t(worm_pattern[iteration][i])); //add 30 offset to remove slack cables
 	    DEBUG_SERIAL.print("  Increase Amount: ");
 	    DEBUG_SERIAL.println(increase_amount);
-	    int32_t currentILEFTposition = calibration[2*i] - increase_amount;
-	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
-	    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
-	    int32_t trueLeftPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i]));
-	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
-	    delay(30);
 
 	    int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
 	    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i+1]));
 	    DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+	    delay(30);
+
+      int32_t currentILEFTposition = calibration[2*i] - increase_amount;
+	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
+	    int32_t trueLeftPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i]));
+	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
 	    delay(30);
 
 	    DEBUG_SERIAL.print("  Segment Number: ");

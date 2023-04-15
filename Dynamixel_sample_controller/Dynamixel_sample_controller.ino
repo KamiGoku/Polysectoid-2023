@@ -54,7 +54,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={318, 314, 119, 74, 168, 241, 278, 236, 43, 74, 66, 158, 108, 321};
+int32_t calibration[number_Of_Motor]={264, 200, 235, 276, 357, 343, 114, 96, 114, 81, 119, 203, 62, 293};
 const int32_t full_contraction = 500;
 
 DynamixelShield dxl;
@@ -76,14 +76,14 @@ void setup() {
   // Get DYNAMIXEL information
   for(int i = 0;i<number_Of_Motor;i++){ //iterate through all the motors
     dxl.ping(DXL_ID[i]);
-    delay(800);
+    delay(100);
   
     // Turn off torque when configuring items in EEPROM area
     dxl.torqueOff(DXL_ID[i]);
     dxl.setOperatingMode(DXL_ID[i], OP_EXTENDED_POSITION);
-    delay(800);
+    delay(100);
     dxl.torqueOn(DXL_ID[i]);
-    delay(800);
+    delay(100);
     //calibration[i] = (int32_t)dxl.getCurAngle(DXL_ID[i]);
   }
 }
