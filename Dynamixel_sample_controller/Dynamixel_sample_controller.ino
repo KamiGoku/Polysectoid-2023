@@ -54,8 +54,9 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]={347, 170, 10, 311, 19, 130, 185, 159, 167, 219, 82, 216, 41, 184};
-const int32_t full_contraction = 500;//850;
+int32_t calibration[number_Of_Motor]= {166, 290, 308, 319, 127, 52, 277, 298, 103, 5, 271, 241, 188, 19};
+const int32_t full_contraction_peristalsis = 500;//850;
+const int32_t full_contraction_undulation = 850;
 
 DynamixelShield dxl;
 
@@ -112,11 +113,11 @@ void loop() {
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
 
-  // peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
-  undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction, !pause);
+  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
+  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
 
   iteration++;
-  iteration = iteration % undulation_cycle_size;
+  iteration = iteration % peristalsis_cycle_size;
   DEBUG_SERIAL.print("Iteration Number: ");
   DEBUG_SERIAL.println(iteration);
   // delay(100);
