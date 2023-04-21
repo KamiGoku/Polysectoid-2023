@@ -17,6 +17,8 @@
 #include <DynamixelShield.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
+#define PERISTALSIS_CYCLES_NUMBER 238 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define UNDULATION_CYCLES_NUMBER 161  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -38,14 +40,14 @@ int8_t worm_pattern[][SEGMENT_NUMBER] = {{0,1,1,0,0,1,1},
                                           {1,1,0,0,1,1,0}/*,
                                           {1,1,0,0,1,1,1}*/}; //1 means contract, 0 means relax
                                           
-int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,1,1,1,1,1}}/*{{1,1,1,0,-1,-1,-1}, 
+int8_t worm_pattern_turning[][SEGMENT_NUMBER] = {{1,1,1,0,-1,-1,-1}, 
                                                   {0,1,1,1,0,-1,-1}, 
                                                   {-1,0,1,1,1,0,-1}, 
                                                   {-1,-1,0,1,1,1,0}, 
                                                   {-1,-1,-1,0,1,1,1}, 
                                                   {0,-1,-1,-1,0,1,1}, 
                                                   {1,0,-1,-1,-1,0,1},
-                                                  {1, 1,0,-1,-1,-1,0}}*/; //1 means turning left. -1 means turning right, 0 means not turning
+                                                  {1, 1,0,-1,-1,-1,0}}; //1 means turning left. -1 means turning right, 0 means not turning
 bool pause = false;
 const int pause_button = 1;
 
@@ -54,7 +56,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]= {166, 290, 308, 319, 127, 52, 277, 298, 103, 5, 271, 241, 188, 19};
+int32_t calibration[number_Of_Motor]= {44, 270, 130, 209, 99, 303, 47, 8, 323, 189, 311, 86, 345, 266};
 const int32_t full_contraction_peristalsis = 500;//850;
 const int32_t full_contraction_undulation = 850;
 
@@ -112,16 +114,24 @@ void loop() {
     // DEBUG_SERIAL.print("Present Position(degree) : ");
     // DEBUG_SERIAL.println(dxl.getPresentPosition(DXL_ID[2*i+1], UNIT_DEGREE));
     // delay(1000);
-
-  peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
-  // undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
-
-  iteration++;
-  iteration = iteration % peristalsis_cycle_size;
-  DEBUG_SERIAL.print("Iteration Number: ");
-  DEBUG_SERIAL.println(iteration);
+  iteration = 0;
+  for(int i = 0;i<PERISTALSIS_CYCLES_NUMBER;i++){
+    peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
+    iteration++;
+    iteration = iteration % peristalsis_cycle_size;
+    DEBUG_SERIAL.print("Iteration Number: ");
+    DEBUG_SERIAL.println(iteration);
+  }
+  
+  iteration = 0;
+  for(int i = 0;i<UNDULATION_CYCLES_NUMBER;i++){
+    undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
+    iteration++;
+    iteration = iteration % undulation_cycle_size;
+    DEBUG_SERIAL.print("Iteration Number: ");
+    DEBUG_SERIAL.println(iteration);
+  }
   // delay(100);
-
 }
 
 void relax_worm(){
