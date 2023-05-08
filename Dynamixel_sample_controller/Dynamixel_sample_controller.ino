@@ -17,7 +17,7 @@
 #include <DynamixelShield.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
-#define PERISTALSIS_CYCLES_NUMBER 205 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define PERISTALSIS_CYCLES_NUMBER 0//205 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
 #define UNDULATION_CYCLES_NUMBER 161  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
@@ -56,7 +56,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]= {82, 6, 5, 121, 134, 39, 22, 239, 73, 117, 264, 128, 89, 112};
+int32_t calibration[number_Of_Motor]= {17, 126, 21, 238, 137, 145, 241, 69, 157, 306, 351, 85, 123, 111};
 const int32_t full_contraction_peristalsis = 500;//850;
 const int32_t full_contraction_undulation = 850;
 
