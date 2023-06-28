@@ -56,7 +56,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]=  {128, 303, 24, 26, 137, 56, 20, 8, 355, 258, 226, 158, 2, 99};
+int32_t calibration[number_Of_Motor]=  {162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
 const int32_t full_contraction_peristalsis = 500;//850;
 const int32_t full_contraction_undulation = 850;
 
