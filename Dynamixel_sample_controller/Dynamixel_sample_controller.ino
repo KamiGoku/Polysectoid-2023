@@ -58,7 +58,7 @@ int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_patte
 
 int iteration = 0;
 int32_t calibration[number_Of_Motor]=  {131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
-const int32_t full_contraction_peristalsis = 850;//1000;//850;
+const int32_t full_contraction_peristalsis = 700;//1000;//850;
 const int32_t full_contraction_undulation = 850;
 
 DynamixelShield dxl;
@@ -159,8 +159,10 @@ void setup() {
   stop.addPositionalArgument("str", "pong");
   stop.addFlagArgument("c");
 
-  DEBUG_SERIAL.println("Type: run -str \"Hello World\" -number 1 -c");
-  DEBUG_SERIAL.println("Type: stop -str \"Hello World\" -number 1 -c");
+  // DEBUG_SERIAL.println("Type: run -str \"Hello World\" -number 1 -c");
+  // DEBUG_SERIAL.println("Type: stop -str \"Hello World\" -number 1 -c");
+  DEBUG_SERIAL.println("Type: \"run\" to start the worm");
+  DEBUG_SERIAL.println("Type: \"stop\" to stop the worm");
 }
 
 void loop() {
@@ -224,7 +226,7 @@ void checkMonitorForInput(){
       DEBUG_SERIAL.println("worm is running");
     }
     if (input == "stop"){
-      pause = !pause;
+      pause = true; //!pause;
       if(pause){
         DEBUG_SERIAL.println("worm is stopped");
       }

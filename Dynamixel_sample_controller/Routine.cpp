@@ -23,14 +23,14 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUM
 	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i+1]));
 	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
-	    delay(30);
+	    delay(70);
 
       int32_t currentILEFTposition = calibration[2*i] - increase_amount;
 	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
 	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t trueLeftPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i]));
 	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
-	    delay(30);
+	    delay(70);
 
 	    // DEBUG_SERIAL.print("  Segment Number: ");
 	    // DEBUG_SERIAL.println(i+1);
@@ -52,7 +52,7 @@ void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGM
 	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);//for debugging
 	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
-	    delay(40);
+	    delay(70);
 
       int32_t increaseRIGHTamount = int32_t(not_pause) * ( relax * (full_contraction * int32_t(worm_pattern_turning[iteration][i]-1)/2));//-1 means turning right
 
@@ -61,10 +61,10 @@ void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGM
 	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);//for debugging
 	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
-	    delay(40);
+	    delay(70);
 
 	    // DEBUG_SERIAL.print("  Segment Number: ");
 	    // DEBUG_SERIAL.println(i);
   }
-  delay(50);
+  delay(70);
 }  
