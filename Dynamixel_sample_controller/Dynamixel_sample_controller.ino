@@ -49,7 +49,7 @@ int8_t worm_pattern_turning[][SEGMENT_NUMBER] = { {1, 1,0,-1,-1,-1,0},
                                                   {-1,0,1,1,1,0,-1}, 
                                                   {0,1,1,1,0,-1,-1},
                                                   {1,1,1,0,-1,-1,-1}}; //1 means turning left. -1 means turning right, 0 means not turning
-bool pause = true;
+  bool pause = true;
 const int pause_button = 1;
 
 
@@ -57,7 +57,7 @@ int32_t peristalsis_cycle_size = sizeof(worm_pattern) / sizeof(worm_pattern[0]);
 int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_pattern_turning[0]);
 
 int iteration = 0;
-int32_t calibration[number_Of_Motor]=  {131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
+int32_t calibration[number_Of_Motor]= {}; //{131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
 const int32_t full_contraction_peristalsis = 700;//1000;//850;
 const int32_t full_contraction_undulation = 850;
 
@@ -121,7 +121,7 @@ void setup() {
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
   // Get DYNAMIXEL information
   delay(1000);
-  Serial.print("Callibrated segment set: {");
+  DEBUG_SERIAL.print("Callibrated segment set: {");
   for(int i = 0;i<number_Of_Motor;i++){ //iterate through all the motors
     dxl.ping(DXL_ID[i]);
     delay(100);
@@ -142,8 +142,9 @@ void setup() {
   DEBUG_SERIAL.println("};");
 
   DEBUG_SERIAL.println("Started!");
-  cli.setOnError(errorCallback); // Set error Callback
+  // cli.setOnError(errorCallback); // Set error Callback
   // Create the ping command with callback function
+  /*
   run = cli.addCommand("run", pingCallback);
   stop =  cli.addCommand("stop", pingCallback);
   // Add argument with name "number", the value has to be set by the user
@@ -158,7 +159,7 @@ void setup() {
   stop.addArgument("number");
   stop.addPositionalArgument("str", "pong");
   stop.addFlagArgument("c");
-
+*/
   // DEBUG_SERIAL.println("Type: run -str \"Hello World\" -number 1 -c");
   // DEBUG_SERIAL.println("Type: stop -str \"Hello World\" -number 1 -c");
   DEBUG_SERIAL.println("Type: \"run\" to start the worm");
@@ -166,7 +167,9 @@ void setup() {
 }
 
 void loop() {
-
+  while(pause){
+    delay(100);
+  }
   // put your main code here, to run repeatedly:
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
@@ -194,9 +197,16 @@ void loop() {
     peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
     iteration++;
     iteration = iteration % peristalsis_cycle_size;
-    // DEBUG_SERIAL.print("Iteration Number: ");
-    // DEBUG_SERIAL.println(iteration);
+    DEBUG_SERIAL.print("Iteration Number: ");
+    DEBUG_SERIAL.println(iteration);
     checkMonitorForInput();
+    for(int i = 0;i<number_Of_Motor;i++){ //iterate through all the motors
+    DEBUG_SERIAL.print(calibration[i]);
+    if(i!=number_Of_Motor-1){
+      DEBUG_SERIAL.print(", ");
+    }
+  }
+  DEBUG_SERIAL.println("};");
   }
   
   iteration = 0;
@@ -204,16 +214,17 @@ void loop() {
     undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
     iteration++;
     iteration = iteration % undulation_cycle_size;
-    // DEBUG_SERIAL.print("Iteration Number: ");
-    // DEBUG_SERIAL.println(iteration);
+    DEBUG_SERIAL.print("Iteration Number: ");
+    DEBUG_SERIAL.println(iteration);
     checkMonitorForInput();
   }
-  // delay(100);
+  delay(100);
 
 }
 
 void checkMonitorForInput(){
     // Check if user typed something into the serial monitor
+    delay(100);
   if (DEBUG_SERIAL.available()) {
     // Read out string from the serial monitor
     String input = DEBUG_SERIAL.readStringUntil('\n');
