@@ -169,6 +169,7 @@ void setup() {
 void loop() {
   while(pause){
     delay(100);
+    checkMonitorForInput();
   }
   // put your main code here, to run repeatedly:
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
@@ -194,6 +195,7 @@ void loop() {
     // delay(1000);
   iteration = 0;
   for(int i = 0;i<PERISTALSIS_CYCLES_NUMBER;i++){
+
     peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
     iteration++;
     iteration = iteration % peristalsis_cycle_size;
@@ -207,16 +209,23 @@ void loop() {
     }
   }
   DEBUG_SERIAL.println("};");
+      if(pause) {
+      iteration--;
+    }
   }
   
   iteration = 0;
   for(int i = 0;i<UNDULATION_CYCLES_NUMBER;i++){
+
     undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
     iteration++;
     iteration = iteration % undulation_cycle_size;
     DEBUG_SERIAL.print("Iteration Number: ");
     DEBUG_SERIAL.println(iteration);
     checkMonitorForInput();
+    if(pause) {
+      iteration--;
+    }
   }
   delay(100);
 
