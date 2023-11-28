@@ -18,7 +18,7 @@
 #include <SimpleCLI.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
-#define PERISTALSIS_CYCLES_NUMBER 205 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define PERISTALSIS_CYCLES_NUMBER 120 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
 #define UNDULATION_CYCLES_NUMBER 161  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
@@ -35,9 +35,9 @@ uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 
-int8_t worm_pattern[][SEGMENT_NUMBER] = { {1,0,0,1,1,0,0}, 
+int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,1,1,0,0,1,1},
                                           {0,0,1,1,0,0,1},
-                                          {0,1,1,0,0,1,1}, 
+                                          {1,0,0,1,1,0,0},
                                           {1,1,0,0,1,1,0}/*,
                                           {1,1,0,0,1,1,1}*/}; //1 means contract, 0 means relax
                                           
