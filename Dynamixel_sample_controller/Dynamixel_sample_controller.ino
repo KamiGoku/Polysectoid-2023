@@ -18,7 +18,7 @@
 #include <SimpleCLI.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
-#define PERISTALSIS_CYCLES_NUMBER 0 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define PERISTALSIS_CYCLES_NUMBER 200 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
 #define UNDULATION_CYCLES_NUMBER 200  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
@@ -34,7 +34,7 @@
 uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
-
+float turningrate = 0.3; 
 int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,1,1,1,0,1,1},
                                           {1,0,1,1,1,0,1},
                                           {1,1,0,1,1,1,0},
@@ -209,7 +209,7 @@ void loop() {
   iteration = 0;
   for(int i = 0;i<PERISTALSIS_CYCLES_NUMBER;i++){
 
-    peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause);
+    peristalsisRoutine (dxl, worm_pattern, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_peristalsis, !pause, turningrate);
     iteration++;
     iteration = iteration % peristalsis_cycle_size;
     DEBUG_SERIAL.print("Iteration Number: ");
@@ -230,7 +230,7 @@ void loop() {
   iteration = 0;
   for(int i = 0;i<UNDULATION_CYCLES_NUMBER;i++){
 
-    undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause);
+    undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause, turningrate);
     iteration++;
     iteration = iteration % undulation_cycle_size;
     DEBUG_SERIAL.print("Iteration Number: ");
