@@ -19,14 +19,14 @@ void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUM
 	    // DEBUG_SERIAL.print("  Increase Amount: ");
 	    // DEBUG_SERIAL.println(increase_amount);
 
-	    int32_t currentIRIGHTposition = calibration[2*i+1] + increase_amount;
+	    int32_t currentIRIGHTposition = calibration[2*i+1] + int32_t((1-turningrate)*double(increase_amount));
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
 	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i+1]));
 	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
 	    delay(40);
 
-      int32_t currentILEFTposition = calibration[2*i] - increase_amount;
+      int32_t currentILEFTposition = calibration[2*i] - int32_t((1+turningrate)*double(increase_amount));
 	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
 	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t trueLeftPosition = int32_t(dxl.getCurAngle(DXL_ID[2*i]));
