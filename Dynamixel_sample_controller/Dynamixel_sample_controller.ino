@@ -34,7 +34,7 @@
 uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
-float turningrate = 0;//-0.24; 
+double turningrate = 0;//-0.24; 
 int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,1,1,1,0,1,1},
                                           {1,0,1,1,1,0,1},
                                           {1,1,0,1,1,1,0},
@@ -72,7 +72,7 @@ int32_t undulation_cycle_size = sizeof(worm_pattern_turning) / sizeof(worm_patte
 
 int iteration = 0;
 int32_t calibration[number_Of_Motor]= {}; //{131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
-const int32_t full_contraction_peristalsis = 700;//1000;//850;
+const int32_t full_contraction_peristalsis = 550;//700;//1000;//850;
 const int32_t full_contraction_undulation = 850;
 
 DynamixelShield dxl;
