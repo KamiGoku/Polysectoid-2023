@@ -15,7 +15,7 @@
 void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration, int32_t full_contraction, bool not_pause, double turningrate){
 
   for(int i = 0;i<number_Of_Motor/2;i++){
-	    int32_t increase_amount =  int32_t(not_pause) * (50 + full_contraction * int32_t(worm_pattern[iteration][i])); //add 30 offset to remove slack cables
+	    double increase_amount =  double(not_pause) * (30 + double(full_contraction) * double(worm_pattern[iteration][i])); //add 30 offset to remove slack cables
 	    // DEBUG_SERIAL.print("  Increase Amount: ");
 	    // DEBUG_SERIAL.println(increase_amount);
 
