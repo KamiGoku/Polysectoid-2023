@@ -18,8 +18,8 @@
 #include <SimpleCLI.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
-#define PERISTALSIS_CYCLES_NUMBER 2000 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
-#define UNDULATION_CYCLES_NUMBER 200  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
+#define PERISTALSIS_CYCLES_NUMBER 0//2000 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define UNDULATION_CYCLES_NUMBER 2000  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
