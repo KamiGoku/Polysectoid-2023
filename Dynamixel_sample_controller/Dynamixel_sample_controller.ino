@@ -35,10 +35,10 @@ uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
 double turningrate = 0;//-0.24; 
-int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,1,1,1,0,1,1},
-                                          {1,0,1,1,1,0,1},
-                                          {1,1,0,1,1,1,0},
-                                          {1,1,1,0,1,1,1}
+int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,0,1,1,0,0,1},
+                                          {1,0,0,1,1,0,0},
+                                          {1,1,0,0,1,1,0},
+                                          {0,1,1,0,0,1,1}
                                           /*{0,1,1,0,0,1,1},
                                           {0,0,1,1,0,0,1},
                                           {1,0,0,1,1,0,0},
@@ -48,7 +48,6 @@ int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,1,1,1,0,1,1},
 int8_t worm_pattern_turning[][SEGMENT_NUMBER] = { {1,1,1,0,-1,-1,-1},
                                                   {0,1,1,1,0,-1,-1},
                                                   {-1,0,1,1,1,0,-1}, 
-                                                  {-1,-1,0,1,1,1,0},
                                                   {-1,-1,0,1,1,1,0},
                                                   {-1,-1,-1,0,1,1,1},
                                                   {0,-1,-1,-1,0,1,1},
