@@ -34,7 +34,7 @@
 uint8_t DXL_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 const int number_Of_Motor = sizeof(DXL_ID) / sizeof(DXL_ID[0]);
 const float DXL_PROTOCOL_VERSION = 2.0;
-double turningrate = 0;//-0.24; 
+double turningrate = 0.15;//-0.24; 
 int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,0,1,1,0,0,1},
                                           {1,0,0,1,1,0,0},
                                           {1,1,0,0,1,1,0},
@@ -45,23 +45,23 @@ int8_t worm_pattern[][SEGMENT_NUMBER] = { {0,0,1,1,0,0,1},
                                           {1,1,0,0,1,1,0}/*,
                                           {1,1,0,0,1,1,1}*/}; //1 means contract, 0 means relax
                                           
-int8_t worm_pattern_turning[][SEGMENT_NUMBER] = { {1,1,1,0,-1,-1,-1},
+int8_t worm_pattern_turning[][SEGMENT_NUMBER] = { /*{1,1,1,0,-1,-1,-1},
                                                   {0,1,1,1,0,-1,-1},
                                                   {-1,0,1,1,1,0,-1}, 
                                                   {-1,-1,0,1,1,1,0},
                                                   {-1,-1,-1,0,1,1,1},
                                                   {0,-1,-1,-1,0,1,1},
                                                   {1,0,-1,-1,-1,0,1},
-                                                  {1, 1,0,-1,-1,-1,0}
+                                                  {1, 1,0,-1,-1,-1,0}*/
                                                   //{-1,-1,-1,-1,-1,-1,-1}
-                                                  /*{1, 1,0,-1,-1,-1,0},
+                                                  {1, 1,0,-1,-1,-1,0},
                                                   {1,0,-1,-1,-1,0,1},
                                                   {0,-1,-1,-1,0,1,1},
                                                   {-1,-1,-1,0,1,1,1},
                                                   {-1,-1,0,1,1,1,0},
                                                   {-1,0,1,1,1,0,-1}, 
                                                   {0,1,1,1,0,-1,-1},
-                                                  {1,1,1,0,-1,-1,-1}*/}; //-1 means turning left. 1 means turning right, 0 means not turning
+                                                  {1,1,1,0,-1,-1,-1}}; //-1 means turning left. 1 means turning right, 0 means not turning
   bool pause = true;
 const int pause_button = 1;
 
@@ -230,7 +230,7 @@ void loop() {
   iteration = 0;
   for(int i = 0;i<UNDULATION_CYCLES_NUMBER;i++){
 
-    undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, iteration, full_contraction_undulation, !pause, turningrate);
+    undulationRoutine (dxl, worm_pattern_turning, number_Of_Motor, calibration, DXL_ID, /*undulation_cycle_size-1-*/iteration, full_contraction_undulation, !pause, turningrate);
     iteration++;
     iteration = iteration % undulation_cycle_size;
     DEBUG_SERIAL.print("Iteration Number: ");

@@ -45,20 +45,20 @@ void undulationRoutine (DynamixelShield &dxl, int8_t worm_pattern_turning[][SEGM
 
   for(int i = 0;i<number_Of_Motor/2;i++){
       int32_t relax = abs(worm_pattern_turning[iteration][i]);      
-	    int32_t increaseLEFTamount = int32_t((1-turningrate)*double(int32_t(not_pause) * ( relax * (full_contraction * int32_t(worm_pattern_turning[iteration][i]+1)/2))));//+1 means turning left
+	    int32_t increaseLEFTamount = /*int32_t((1-turningrate)*double(*/int32_t(not_pause) * ( relax * (full_contraction * int32_t(worm_pattern_turning[iteration][i]+1)/2));//+1 means turning left
 	    DEBUG_SERIAL.print("  Increase Amount: ");
 	    // DEBUG_SERIAL.println(increase_amount);
 
-	    int32_t currentILEFTposition = calibration[2*i] - increaseLEFTamount;//actual update with calibration data
+	    int32_t currentILEFTposition = calibration[2*i] - int32_t((1-turningrate)*double(increaseLEFTamount));//actual update with calibration data
 	    dxl.setGoalAngle(DXL_ID[2*i], currentILEFTposition); //, UNIT_DEGREE);
 	    DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t trueLeftPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i]);//for debugging
 	    DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
 	    delay(30);
 
-      int32_t increaseRIGHTamount = int32_t((1+turningrate)*double(int32_t(not_pause) * ( relax * (full_contraction * int32_t(worm_pattern_turning[iteration][i]-1)/2))));//-1 means turning right
+      int32_t increaseRIGHTamount = /*int32_t((1+turningrate)*double(*/int32_t(not_pause) * ( relax * (full_contraction * int32_t(worm_pattern_turning[iteration][i]-1)/2));//-1 means turning right
 
-	    int32_t currentIRIGHTposition = calibration[2*i+1] - increaseRIGHTamount;//actual update with calibration data
+	    int32_t currentIRIGHTposition = calibration[2*i+1] - int32_t((1+turningrate)*double(increaseRIGHTamount));//actual update with calibration data
 	    dxl.setGoalAngle(DXL_ID[2*i+1], currentIRIGHTposition); //, UNIT_DEGREE);
 	    DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t trueRightPosition = (int32_t)dxl.getCurAngle(DXL_ID[2*i+1]);//for debugging
