@@ -79,7 +79,7 @@ int iteration = 0;
 int32_t calibration[number_Of_Motor]= {}; //{131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
 const int32_t full_contraction_peristalsis = 700;//550;//700;//1000;//850;
 const int32_t full_contraction_undulation = 850;//1300;
-const int32_t full_contraction_3D_turn = 500;
+const int32_t full_contraction_3D_turn = 700;
 
 DynamixelShield dxl;
 
