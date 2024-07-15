@@ -116,5 +116,5 @@ void turning3DRoutine (DynamixelShield &dxl, int8_t worm_pattern_3D_turning[][SE
 	    DEBUG_SERIAL.print("  Segment Number: ");
 	    DEBUG_SERIAL.println(i);
   }
-  delay(150);
+  delay(300);//150);
 }  
