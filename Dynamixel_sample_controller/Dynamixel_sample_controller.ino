@@ -18,9 +18,9 @@
 #include <SimpleCLI.h>
 #include "Routine.h" 
 #define SEGMENT_NUMBER 7
-#define PERISTALSIS_CYCLES_NUMBER 0//2000 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
-#define UNDULATION_CYCLES_NUMBER 00  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
-#define TURNING_3D_CYCLES_NUMBER 2000
+#define PERISTALSIS_CYCLES_NUMBER 2000//2000 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
+#define UNDULATION_CYCLES_NUMBER 0  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
+#define TURNING_3D_CYCLES_NUMBER 00
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -63,10 +63,20 @@ int8_t worm_pattern_turning[][SEGMENT_NUMBER] = { /*{1,1,1,0,-1,-1,-1},
                                                   {-1,0,1,1,1,0,-1}, 
                                                   {0,1,1,1,0,-1,-1},
                                                   {1,1,1,0,-1,-1,-1}}; //-1 means turning left. 1 means turning right, 0 means not turning
-int8_t worm_pattern_3D_turning[][SEGMENT_NUMBER] = {{3,3,0,0,0,0,0},
-                                                    {2,2,0,0,0,0,0},
-                                                    {1,1,0,0,0,0,0},
-                                                    {4,4,0,0,0,0,0}};
+int8_t worm_pattern_3D_turning[][SEGMENT_NUMBER] = {/*{1,2,3,0,0,0,0},
+                                                    {2,3,4,0,0,0,0},
+                                                    {3,4,1,0,0,0,0},
+                                                    {4,1,2,0,0,0,0},
+                                                    {1,2,3,0,0,0,0},
+                                                    {2,3,4,0,0,0,0},
+                                                    {3,4,1,0,0,0,0},
+                                                    {4,1,2,0,0,0,0},*/
+                                                    
+                                                    {1,1,1,0,0,0,0},
+                                                    {2,2,2,0,0,0,0},
+                                                    {3,3,3,0,0,0,0},
+                                                    {4,4,4,0,0,0,0}
+                                                    };
   bool pause = true;
 const int pause_button = 1;
 
@@ -79,7 +89,7 @@ int iteration = 0;
 int32_t calibration[number_Of_Motor]= {}; //{131, 251, 218, 172, 284, 165, 357, 198, 308, 132, 257, 226, 302, 40};//{162, 100, 24, 240, 136, 334, 127, 6, 355, 304, 226, 168, 2, 268};
 const int32_t full_contraction_peristalsis = 700;//550;//700;//1000;//850;
 const int32_t full_contraction_undulation = 850;//1300;
-const int32_t full_contraction_3D_turn = 800;
+const int32_t full_contraction_3D_turn = 500;
 
 DynamixelShield dxl;
 
