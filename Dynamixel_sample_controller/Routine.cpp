@@ -118,3 +118,47 @@ void turning3DRoutine (DynamixelShield &dxl, int8_t worm_pattern_3D_turning[][SE
   }
   delay(2200);//150);
 }  
+
+void peristalsis3DRoutine (DynamixelShield &dxl, int8_t worm_3D_pattern_peristalsis[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration, int32_t full_contraction, bool not_pause, double turningrate){
+
+  for(int i = 0;i<number_Of_Motor/4;i++){
+	    double increase_amount =  double(not_pause) * (30 + double(full_contraction) * double(worm_3D_pattern_peristalsis[iteration][i])); //add 30 offset to remove slack cables
+	    // DEBUG_SERIAL.print("  Increase Amount: ");
+	    // DEBUG_SERIAL.println(increase_amount);
+
+	    int32_t current4THposition = calibration[4*i+3] - int32_t(increase_amount);
+	    dxl.setGoalAngle(DXL_ID[4*i+3], current4THposition); //, UNIT_DEGREE);
+	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
+	    int32_t true4THPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+3]));
+	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+	    delay(20);
+
+      int32_t current3RDposition = calibration[4*i+2] + int32_t(increase_amount);
+	    dxl.setGoalAngle(DXL_ID[4*i+2], current3RDposition); //, UNIT_DEGREE);
+	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
+	    int32_t true3RDPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+2]));
+	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
+	    delay(20);
+
+      int32_t current2NDposition = calibration[4*i+1] + int32_t(increase_amount);
+	    dxl.setGoalAngle(DXL_ID[4*i+1], current2NDposition); //, UNIT_DEGREE);
+	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
+	    int32_t true2NDPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+1]));
+	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
+	    delay(20);
+
+      int32_t current1STposition = calibration[4*i] - int32_t(increase_amount);
+	    dxl.setGoalAngle(DXL_ID[4*i], current1STposition); //, UNIT_DEGREE);
+	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
+	    int32_t true1STPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i]));
+	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
+	    delay(20);
+
+
+	    // DEBUG_SERIAL.print("  Segment Number: ");
+	    // DEBUG_SERIAL.println(i+1);
+
+      //delay(800);
+	}
+   delay(1000);
+}
