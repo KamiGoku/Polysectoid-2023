@@ -217,3 +217,84 @@ void undulation_3D_Obstacle (DynamixelShield &dxl, int8_t worm_3D_pattern_latera
   }
   delay(100);//150);
 } 
+
+double direction_Mapping_Function (int8_t motor, int8_t lateral, int8_t vertical, double lateral_deform, double vertical_deform){
+  float B1 = float(lateral==1);
+  float B2 = float(vertical==2);
+  float B3 = float(lateral==3);
+  float B4 = float(vertical==4);
+  float contraction = 0;
+  if(motor == 1){
+    contraction = max(min(0.5*pow((B1-B3)*float(lateral_deform),3) + 0.5 +0.1*abs(0.5*pow((B2+B4)*float(vertical_deform),3)+0.5) ,1),0);
+    return double(contraction);
+  }
+  if(motor == 3){
+    contraction = max(min(0.5*pow((B3-B1)*float(lateral_deform),3) + 0.5 +0.1*abs(0.5*pow((B2+B4)*float(vertical_deform),3)+0.5) ,1),0);
+    return double(contraction);
+  }
+   if(motor == 2){
+    contraction = max(min(0.5*pow((B2-B4)*float(vertical_deform),3)+0.5 +0.1*abs(0.5*pow((B1+B3)*float(lateral_deform),3)+0.5) ,1),0);
+    return double(contraction);
+  }
+   if(motor == 4){
+    contraction = max(min(0.5*pow((B4-B2)*float(vertical_deform),3)+0.5 +0.1*abs(0.5*pow((B1+B3)*float(lateral_deform),3)+0.5) ,1),0);
+    return double(contraction);
+  }
+  return(contraction);
+}
+
+
+void undulation_3D_Obstacle_Reoriented (DynamixelShield &dxl, int8_t worm_3D_pattern_lateral[][SEGMENT_NUMBER], int8_t worm_3D_pattern_vertical[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration1, int iteration2,/* double vertical_deform,double lateral_deform,*/ int32_t full_contraction, bool not_pause, double turningrate){
+
+  double slope_factor = 1;//How much of the front part of the worm lift its head up
+  double alpha = log(2/min(max(slope_factor,0.01),1))/double(-1 + number_Of_Motor/4);
+  for(int i = 0;i<number_Of_Motor/4;i++){
+      //int32_t relax = int32_t(bool(worm_pattern_3D_turning[iteration][i]));   
+      
+      int8_t direction_lateral = worm_3D_pattern_lateral[iteration1][i];
+      int8_t direction_vertical = worm_3D_pattern_vertical[iteration2][i];
+      
+      double vertical_deform = min(max(slope_factor*exp(alpha*double(i))-1,0),1);//expoentional function of weight variants from the tail to the head//double(i)/double(-1 + number_Of_Motor/4);
+      double lateral_deform = sqrt(1 - sq(vertical_deform));
+
+	    double increase_1_amount = double(not_pause) * ( (double(full_contraction) * (direction_Mapping_Function(1, direction_lateral, direction_vertical, lateral_deform, vertical_deform))));//1 means turning in the 1_2 direction//make a change here?
+	    DEBUG_SERIAL.print("  Increase Amount 1: ");
+	    int32_t currentI_1_position = calibration[4*i] - int32_t(increase_1_amount);//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[4*i], currentI_1_position); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present 1 Position(raw) : ");
+	    int32_t true1Position = (int32_t)dxl.getCurAngle(DXL_ID[4*i]);//for debugging
+	    DEBUG_SERIAL.println(true1Position - calibration[4*i]);
+	    delay(20);
+
+      double increase_2_amount = double(not_pause) * (  (double(full_contraction) * (direction_Mapping_Function(2, direction_lateral, direction_vertical, lateral_deform, vertical_deform))));//2 means turning in the 2_3 direction
+	    DEBUG_SERIAL.print("  Increase Amount 2: ");
+	    int32_t currentI_2_position = calibration[4*i+1] + int32_t(increase_2_amount);//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[4*i+1], currentI_2_position); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present 2 Position(raw) : ");
+	    int32_t true2Position = (int32_t)dxl.getCurAngle(DXL_ID[4*i+1]);//for debugging
+	    DEBUG_SERIAL.println(true2Position - calibration[4*i+1]);
+	    delay(20);
+
+      double increase_3_amount = double(not_pause) * ( (double(full_contraction) * (direction_Mapping_Function(3, direction_lateral, direction_vertical, lateral_deform, vertical_deform))));//3 means turning in the 3_4 direction
+	    DEBUG_SERIAL.print("  Increase Amount 3: ");
+	    int32_t currentI_3_position = calibration[4*i+2] + int32_t(increase_3_amount);//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[4*i+2], currentI_3_position); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present 3 Position(raw) : ");
+	    int32_t true3Position = (int32_t)dxl.getCurAngle(DXL_ID[4*i+2]);//for debugging
+	    DEBUG_SERIAL.println(true3Position - calibration[4*i+2]);
+	    delay(20);
+
+      double increase_4_amount = double(not_pause) * ( (double(full_contraction) * (direction_Mapping_Function(4, direction_lateral, direction_vertical, lateral_deform, vertical_deform))));//4 means turning in the 4_1 direction
+	    DEBUG_SERIAL.print("  Increase Amount 4: ");
+	    int32_t currentI_4_position = calibration[4*i+3] - int32_t(increase_4_amount);//actual update with calibration data
+	    dxl.setGoalAngle(DXL_ID[4*i+3], currentI_4_position); //, UNIT_DEGREE);
+	    DEBUG_SERIAL.print(".   Present 4 Position(raw) : ");
+	    int32_t true4Position = (int32_t)dxl.getCurAngle(DXL_ID[4*i+3]);//for debugging
+	    DEBUG_SERIAL.println(true4Position - calibration[4*i+3]);
+	    delay(20);
+
+	    DEBUG_SERIAL.print("  Segment Number: ");
+	    DEBUG_SERIAL.println(i);
+  }
+  delay(100);//150);
+} 

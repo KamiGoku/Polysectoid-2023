@@ -94,15 +94,12 @@ int8_t worm_3D_pattern_lateral[][SEGMENT_NUMBER]={{1,1,1,0,3,3,3},
                                                     {3,0,1,1,1,0,3},
                                                     {0,1,1,1,0,3,3},
                                                     };
-int8_t worm_3D_pattern_vertical[][SEGMENT_NUMBER]={{2,2,2,2,0,4,4},
-                                                  {2,2,2,0,4,4,0},
-                                                  {2,2,0,4,4,0,0},
-                                                  {2,0,4,4,0,0,2},
-                                                  {0,4,4,0,0,2,2},
-                                                  {4,4,0,0,2,2,2},
-                                                  {4,0,0,2,2,2,2},
-                                                  {0,0,2,2,2,2,0},
-                                                  {0,2,2,2,2,0,4,},
+int8_t worm_3D_pattern_vertical[][SEGMENT_NUMBER]={{4,4,4,0,0,0,4},
+                                                  {4,4,0,0,0,4,4},
+                                                  {4,0,0,0,4,4,4},
+                                                  {0,0,0,4,4,4,0},
+                                                  {0,0,4,4,4,0,0},
+                                                  {0,4,4,4,0,0,0}                                                                                                    
                                                   };
 const int pause_button = 1;
 
@@ -123,7 +120,7 @@ const int32_t full_contraction_peristalsis = 700;//550;//700;//1000;//850;
 const int32_t full_contraction_undulation = 850;//1300;
 const int32_t full_contraction_3D_turn = 500;
 const int32_t full_contraction_3D_peristalsis = 500;//300;
-const int32_t full_contraction_3D_undulation_obstacle = 600;
+const int32_t full_contraction_3D_undulation_obstacle = 850;
 
 //double vertical_deform=0.3;
 double lateral_deform=0.7;
@@ -329,6 +326,7 @@ void loop() {
   iteration2 = 0;
   for(int i = 0;i<UNDULATION_3D_OBSTACLE;i++){
     undulation_3D_Obstacle (dxl, worm_3D_pattern_lateral, worm_3D_pattern_vertical, number_Of_Motor, calibration, DXL_ID, /*undulation_cycle_size-1-*/iteration1, iteration2, /*vertical_deform, lateral_deform,*/ full_contraction_3D_undulation_obstacle, !pause, turningrate);
+    //undulation_3D_Obstacle_Reoriented (dxl, worm_3D_pattern_lateral, worm_3D_pattern_vertical, number_Of_Motor, calibration, DXL_ID, /*undulation_cycle_size-1-*/iteration1, iteration2, /*vertical_deform, lateral_deform,*/ full_contraction_3D_undulation_obstacle, !pause, turningrate);
     iteration1++;
     iteration2++;
     iteration1 = iteration1 % obstacle_3D_cycle_lateral_size;
