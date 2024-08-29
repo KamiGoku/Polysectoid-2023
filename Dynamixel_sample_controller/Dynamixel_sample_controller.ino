@@ -22,7 +22,8 @@
 #define UNDULATION_CYCLES_NUMBER 0  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 #define TURNING_3D_CYCLES_NUMBER 0
 #define PERISTALSIS_3D_CYCLES_NUMBER 0
-#define UNDULATION_3D_OBSTACLE 2000
+#define UNDULATION_3D_OBSTACLE 0
+#define UNDULATION_3D_HEADBOB_OBSTACLE 2000
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560)
   #include <SoftwareSerial.h>
@@ -101,6 +102,15 @@ int8_t worm_3D_pattern_vertical[][SEGMENT_NUMBER]={{4,4,4,0,0,0,4},
                                                   {0,0,4,4,4,0,0},
                                                   {0,4,4,4,0,0,0}                                                                                                    
                                                   };
+int8_t worm_3D_pattern_headbob_lateral[][SEGMENT_NUMBER]={{1,1,1,0,3,3,3},
+                                                    {1,1,0,3,3,3,0},
+                                                    {1,0,3,3,3,0,1},
+                                                    {0,3,3,3,0,1,1},
+                                                    {3,3,3,0,1,1,1},
+                                                    {3,3,0,1,1,1,0},
+                                                    {3,0,1,1,1,0,3},
+                                                    {0,1,1,1,0,3,3},
+                                                    };
 const int pause_button = 1;
 
 
@@ -110,6 +120,8 @@ int32_t turning_3d_cycle_size = sizeof(worm_pattern_3D_turning) / sizeof(worm_pa
 int32_t peristalsis_3D_cycle_size = sizeof(worm_3D_pattern_peristalsis) / sizeof(worm_3D_pattern_peristalsis[0]);
 int32_t obstacle_3D_cycle_lateral_size = sizeof(worm_3D_pattern_lateral) / sizeof(worm_3D_pattern_lateral[0]);
 int32_t obstacle_3D_cycle_vertical_size = sizeof(worm_3D_pattern_vertical) / sizeof(worm_3D_pattern_vertical[0]);
+int32_t obstacle_3D_lateral_headbob_size = sizeof(worm_3D_pattern_headbob_lateral) / sizeof(worm_3D_pattern_headbob_lateral[0]);
+int32_t obstacle_3D_vertical_headbob_size = 20;
 
 int iteration = 0;//2_D motion state machine index tracking
 int iteration1 = 0;//3_D lateral motion state machine index tracking
@@ -331,6 +343,27 @@ void loop() {
     iteration2++;
     iteration1 = iteration1 % obstacle_3D_cycle_lateral_size;
     iteration2 = iteration2 % obstacle_3D_cycle_vertical_size;
+    DEBUG_SERIAL.print("Lateral Iteration Number: ");
+    DEBUG_SERIAL.println(iteration1);
+    DEBUG_SERIAL.print("Vertical Iteration Number: ");
+    DEBUG_SERIAL.println(iteration2);
+    checkMonitorForInput();
+    if(pause) {
+      iteration1--;
+      iteration2--;
+    }
+  }
+  delay(100);
+
+    iteration1 = 0;
+  iteration2 = 0;
+  for(int i = 0;i<UNDULATION_3D_HEADBOB_OBSTACLE;i++){
+    double headlift_Percentage = double(iteration2)/double(obstacle_3D_vertical_headbob_size);
+    undulation_Headbob_3D_Obstacle (dxl, worm_3D_pattern_headbob_lateral, number_Of_Motor, calibration, DXL_ID, /*undulation_cycle_size-1-*/iteration1, headlift_Percentage, /*vertical_deform, lateral_deform,*/ full_contraction_3D_undulation_obstacle, !pause, turningrate);
+    iteration1++;
+    iteration2++;
+    iteration1 = iteration1 % obstacle_3D_lateral_headbob_size;
+    iteration2 = iteration2 % obstacle_3D_vertical_headbob_size;
     DEBUG_SERIAL.print("Lateral Iteration Number: ");
     DEBUG_SERIAL.println(iteration1);
     DEBUG_SERIAL.print("Vertical Iteration Number: ");
