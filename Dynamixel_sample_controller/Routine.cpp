@@ -12,6 +12,9 @@
   #define DEBUG_SERIAL Serial
 #endif
 
+extern float anglemeasured;
+extern float anglegoal;
+
 void peristalsisRoutine (DynamixelShield &dxl, int8_t worm_pattern[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration, int32_t full_contraction, bool not_pause, double turningrate){
 
   for(int i = 0;i<number_Of_Motor/4;i++){
@@ -128,10 +131,13 @@ void peristalsis3DRoutine (DynamixelShield &dxl, int8_t worm_3D_pattern_peristal
 
 	    int32_t current4THposition = calibration[4*i+3] - int32_t(increase_amount);
 	    dxl.setGoalAngle(DXL_ID[4*i+3], current4THposition); //, UNIT_DEGREE);
+			
 	    // DEBUG_SERIAL.print(".   Present Right Position(raw) : ");
 	    int32_t true4THPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+3]));
 	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
 	    delay(20);
+			anglemeasured = float(dxl.getPresentPosition(1,UNIT_DEGREE));
+			Serial.println(anglemeasured);
 
       int32_t current3RDposition = calibration[4*i+2] + int32_t(increase_amount);
 	    dxl.setGoalAngle(DXL_ID[4*i+2], current3RDposition); //, UNIT_DEGREE);
@@ -139,6 +145,8 @@ void peristalsis3DRoutine (DynamixelShield &dxl, int8_t worm_3D_pattern_peristal
 	    int32_t true3RDPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+2]));
 	    // DEBUG_SERIAL.println(trueRightPosition - calibration[2*i+1]);
 	    delay(20);
+			anglemeasured = float(dxl.getPresentPosition(1,UNIT_DEGREE));
+			Serial.println(anglemeasured);
 
       int32_t current2NDposition = calibration[4*i+1] + int32_t(increase_amount);
 	    dxl.setGoalAngle(DXL_ID[4*i+1], current2NDposition); //, UNIT_DEGREE);
@@ -146,21 +154,33 @@ void peristalsis3DRoutine (DynamixelShield &dxl, int8_t worm_3D_pattern_peristal
 	    int32_t true2NDPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i+1]));
 	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
 	    delay(20);
+			anglemeasured = float(dxl.getPresentPosition(1,UNIT_DEGREE));
+			Serial.println(anglemeasured);
 
       int32_t current1STposition = calibration[4*i] - int32_t(increase_amount);
 	    dxl.setGoalAngle(DXL_ID[4*i], current1STposition); //, UNIT_DEGREE);
 	    // DEBUG_SERIAL.print(".   Present Left Position(raw) : ");
 	    int32_t true1STPosition = int32_t(dxl.getCurAngle(DXL_ID[4*i]));
 	    // DEBUG_SERIAL.println(trueLeftPosition - calibration[2*i]);
+			if(DXL_ID[4*i]==1){
+				anglegoal = float(current1STposition);
+			}
 	    delay(20);
+			anglemeasured = float(dxl.getPresentPosition(1,UNIT_DEGREE));
+			Serial.println(anglemeasured);
 
-
+			// DEBUG_SERIAL.print("Present Position(raw) : ");
+  	  // Serial.println(dxl.getPresentPosition(1));//use angle in degree
 	    // DEBUG_SERIAL.print("  Segment Number: ");
 	    // DEBUG_SERIAL.println(i+1);
 
       //delay(800);
 	}
-   delay(1000);
+   for(int i =0;i<50;i++){
+		delay(20);
+		anglemeasured = float(dxl.getPresentPosition(1,UNIT_DEGREE));
+		Serial.println(anglemeasured);
+	 }
 }
 
 void undulation_3D_Obstacle (DynamixelShield &dxl, int8_t worm_3D_pattern_lateral[][SEGMENT_NUMBER], int8_t worm_3D_pattern_vertical[][SEGMENT_NUMBER], int number_Of_Motor, int32_t calibration[], uint8_t DXL_ID[], int iteration1, int iteration2,/* double vertical_deform,double lateral_deform,*/ int32_t full_contraction, bool not_pause, double turningrate){

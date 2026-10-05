@@ -17,11 +17,49 @@
 #include <DynamixelShield.h>
 #include <SimpleCLI.h>
 #include "Routine.h" 
+
+//timer interrupt----------------
+// Select only one to be true for SAMD21. Must must be placed at the beginning before #include "SAMDTimerInterrupt.h"
+#define USING_TIMER_TC3         true      // Only TC3 can be used for SAMD51
+#define USING_TIMER_TC4         false     // Not to use with Servo library
+#define USING_TIMER_TC5         false
+#define USING_TIMER_TCC         false
+#define USING_TIMER_TCC1        false
+#define USING_TIMER_TCC2        false     // Don't use this, can crash on some boards
+#include "SAMDTimerInterrupt.h"
+//////////////////////////////////////////////
+
+// TC3, TC4, TC5 max permissible TIMER_INTERVAL_MS is 1398.101 ms, larger will overflow, therefore not permitted
+// Use TCC, TCC1, TCC2 for longer TIMER_INTERVAL_MS
+#define TIMER_INTERVAL_MS        200
+
+#if USING_TIMER_TC3
+  #define SELECTED_TIMER      TIMER_TC3
+#elif USING_TIMER_TC4
+  #define SELECTED_TIMER      TIMER_TC4
+#elif USING_TIMER_TC5
+  #define SELECTED_TIMER      TIMER_TC5
+#elif USING_TIMER_TCC
+  #define SELECTED_TIMER      TIMER_TCC
+#elif USING_TIMER_TCC1
+  #define SELECTED_TIMER      TIMER_TCC1
+#elif USING_TIMER_TCC2
+  #define SELECTED_TIMER      TIMER_TCC
+#else
+  #error You have to select 1 Timer  
+#endif
+
+// Init selected SAMD timer
+SAMDTimer ITimer(SELECTED_TIMER);
+volatile float anglemeasured = 0;
+volatile float anglegoal = 0;
+//-------------------------------
+
 #define SEGMENT_NUMBER 7
 #define PERISTALSIS_CYCLES_NUMBER 0//2000 //1:40 min = 100,000 ms;100,000ms/(30ms*14) ~= 238
 #define UNDULATION_CYCLES_NUMBER 0  //1:30 min = 90,000 ms;90,000ms/(40ms*14) ~= 161
 #define TURNING_3D_CYCLES_NUMBER 0
-#define PERISTALSIS_3D_CYCLES_NUMBER 0
+#define PERISTALSIS_3D_CYCLES_NUMBER 1000
 #define UNDULATION_3D_OBSTACLE 0
 #define UNDULATION_3D_HEADBOB_OBSTACLE 2000
 
@@ -131,7 +169,7 @@ int32_t calibration[number_Of_Motor]= {}; //{131, 251, 218, 172, 284, 165, 357, 
 const int32_t full_contraction_peristalsis = 700;//550;//700;//1000;//850;
 const int32_t full_contraction_undulation = 850;//1300;
 const int32_t full_contraction_3D_turn = 500;
-const int32_t full_contraction_3D_peristalsis = 500;//300;
+const int32_t full_contraction_3D_peristalsis = 700;//300;
 const int32_t full_contraction_3D_undulation_obstacle = 850;
 
 //double vertical_deform=0.3;
@@ -184,6 +222,19 @@ void errorCallback(cmd_error* e) {
 //This namespace is required to use Control table item names
 using namespace ControlTableItem;
 
+//timer interrupt----------------
+volatile float anglemeasure = 0;
+void TimerHandler()
+{
+  // Doing something here inside ISR
+  // Serial.println(anglemeasured);
+  checkMonitorForInput();
+}
+
+// TC3, TC4, TC5 max permissible TIMER_INTERVAL_MS is 1398.101 ms, larger will overflow, therefore not permitted
+// Use TCC, TCC1, TCC2 for longer TIMER_INTERVAL_MS
+//--------------------------------
+
 void setup() {
   // put your setup code here, to run once:
   // pinMode(pause_button, INPUT);
@@ -215,6 +266,9 @@ void setup() {
       DEBUG_SERIAL.print(", ");
     }
   }
+
+
+  
   DEBUG_SERIAL.println("};");
 
   DEBUG_SERIAL.println("Started!");
@@ -240,6 +294,15 @@ void setup() {
   // DEBUG_SERIAL.println("Type: stop -str \"Hello World\" -number 1 -c");
   DEBUG_SERIAL.println("Type: \"run\" to start the worm");
   DEBUG_SERIAL.println("Type: \"stop\" to stop the worm");
+
+  delay(1000);
+    // Init timer ITimer1
+  // Interval in microsecs
+  if (ITimer.attachInterruptInterval_MS(TIMER_INTERVAL_MS, TimerHandler))
+    Serial.println("Starting  ITimer OK, millis() = " + String(millis()));
+  else
+    Serial.println("Can't set ITimer. Select another freq. or timer");
+  //-------------------------
 }
 
 void loop() {
@@ -325,9 +388,9 @@ void loop() {
     peristalsis3DRoutine (dxl, worm_3D_pattern_peristalsis, number_Of_Motor, calibration, DXL_ID, /*undulation_cycle_size-1-*/iteration, full_contraction_3D_turn, !pause, turningrate);
     iteration++;
     iteration = iteration % peristalsis_3D_cycle_size;
-    DEBUG_SERIAL.print("Iteration Number: ");
-    DEBUG_SERIAL.println(iteration);
-    checkMonitorForInput();
+    // DEBUG_SERIAL.print("Iteration Number: ");
+    // DEBUG_SERIAL.println(iteration);
+    // checkMonitorForInput();
     if(pause) {
       iteration--;
     }
@@ -380,6 +443,7 @@ void loop() {
 void checkMonitorForInput(){
     // Check if user typed something into the serial monitor
     delay(100);
+
   if (DEBUG_SERIAL.available()) {
     // Read out string from the serial monitor
     String input = DEBUG_SERIAL.readStringUntil('\n');
